@@ -62,7 +62,7 @@ const Page = async ({ params }: { params: { slug: string } }) => {
   };
 
   const careerList = parseCareerList(
-    degree.careers || degree.careerOpportunities || ""
+    degree.careerOpportunities || degree.careerOpportunities || ""
   );
 
   return (
