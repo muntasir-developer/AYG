@@ -6,7 +6,7 @@ import {
   Satellite,
   Brain,
 } from "lucide-react";
-
+import { ReactNode } from "react";
 // ----------------------------- Helper -----------------------------
 /**
  * Converts a string into a clean URL slug
@@ -34,7 +34,7 @@ export type Degree = {
 export type Category = {
   key: string;
   label: string;
-  icon: JSX.Element;
+  icon: ReactNode;
   degrees: Degree[];
 };
 

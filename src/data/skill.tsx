@@ -12,6 +12,7 @@ import {
   Dumbbell,
   Sparkles,
 } from "lucide-react";
+import { ReactNode } from "react";
 
 interface SkillDetail {
   name: string;
@@ -33,7 +34,7 @@ export const slugify = (s: string) =>
 interface Category {
   key: string;
   label: string;
-  icon: JSX.Element;
+  icon: ReactNode;
   skills: SkillDetail[];
 }
 
