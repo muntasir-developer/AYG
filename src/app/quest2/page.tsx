@@ -45,7 +45,7 @@ const Page: React.FC = () => {
         <div className="text-center mb-6 sm:mb-8 lg:mb-10">
           <h1
             className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white tracking-tight mb-3 px-2
-                         bg-gradient-to-r from-white via-blue-100 to-indigo-200 bg-clip-text text-transparent
+                         bg-gradient-to-r from-white via-blue-100 to-indigo-200 bg-clip-text 
                          leading-tight"
           >
             Which stream did you choose in{" "}
