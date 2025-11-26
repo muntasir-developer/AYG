@@ -17,7 +17,7 @@ import Link from "next/link";
 export async function generateStaticParams() {
   return COMMERCE_CATEGORIES.flatMap((category) =>
     category.degrees.map((degree) => ({
-      slug: slugify(degree.name),
+      params: { slug: slugify(degree.name) }, // wrap in `params`
     }))
   );
 }
