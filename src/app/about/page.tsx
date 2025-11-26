@@ -451,7 +451,7 @@ const AboutPage = () => {
                 </div>
 
                 <p className="text-slate-200 text-xs sm:text-sm md:text-base font-light leading-relaxed relative z-10">
-                  AYG isn't just a guide — it's a{" "}
+                  AYG isn&apos;t just a guide — it&apos;s a{" "}
                   <span className="font-bold text-transparent bg-gradient-to-r from-cyan-400 via-blue-400 to-orange-400 bg-clip-text relative">
                     career companion
                     <span className="absolute bottom-0 left-0 w-full h-[2px] bg-gradient-to-r from-cyan-400 via-blue-400 to-orange-400"></span>
