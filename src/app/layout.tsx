@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Md Muntasir",
+  title: "Achieve Your Goal",
   description: "Built by Md Muntasir",
 };
 
