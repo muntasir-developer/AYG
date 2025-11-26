@@ -231,7 +231,7 @@ const AboutPage = () => {
 
                 <div className="absolute inset-0 bg-gradient-to-br from-blue-600 to-orange-600 rounded-2xl opacity-80 group-hover:opacity-100 transition-opacity duration-500"></div>
                 <img
-                  src="/muntasir.png"
+                  src="/muntasirs.png"
                   alt="Founder"
                   className="relative rounded-2xl w-full h-auto object-cover border-2 border-cyan-400/50 group-hover:scale-[1.02] transition-all duration-700 shadow-2xl"
                   style={{ animation: "glow 4s ease-in-out infinite" }}
