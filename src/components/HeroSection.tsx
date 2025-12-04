@@ -19,7 +19,7 @@ const HeroSection = () => {
   }, []);
 
   const handleGetStarted = () => {
-    router.push("/quest1");
+    router.push("/learn");
   };
 
   return (
