@@ -23,6 +23,8 @@ export async function generateStaticParams() {
 }
 
 const Page = async ({ params }: { params: { slug: string } }) => {
+  const { slug } = await params; // ✅ FIXED
+
   const allSkills = SKILL_CATEGORIES.flatMap((category) =>
     category.skills.map((skill) => ({
       ...skill,
@@ -31,7 +33,7 @@ const Page = async ({ params }: { params: { slug: string } }) => {
     }))
   );
 
-  const skill = allSkills.find((s) => s.slug === params.slug);
+  const skill = allSkills.find((s) => s.slug === slug);
 
   if (!skill) return notFound();
 

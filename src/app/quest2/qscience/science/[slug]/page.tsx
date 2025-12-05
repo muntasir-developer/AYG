@@ -22,7 +22,9 @@ export async function generateStaticParams() {
   );
 }
 
-const Page = async ({ params }: { params: { slug: string } }) => {
+const Page = async ({ params }: { params: Promise<{ slug: string }> }) => {
+  const { slug } = await params;
+
   const allDegrees = SCIENCE_CATEGORIES.flatMap((category) =>
     category.degrees.map((degree) => ({
       ...degree,
@@ -31,7 +33,7 @@ const Page = async ({ params }: { params: { slug: string } }) => {
     }))
   );
 
-  const degree = allDegrees.find((d) => d.slug === params.slug);
+  const degree = allDegrees.find((d) => d.slug === slug);
 
   if (!degree) return notFound();
 
