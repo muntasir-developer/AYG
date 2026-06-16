@@ -1,29 +1,59 @@
 "use client";
-import { SKILL_CATEGORIES, slugify } from "@/data/skill";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import {
+  getCategories,
+  getPrograms,
+  type Category,
+  type Program,
+} from "@/lib/catalog";
+import CategoryIcon from "@/components/CategoryIcon";
 
 const chip =
   "px-3 py-1.5 rounded-full border transition shadow-sm text-sm whitespace-nowrap";
 
+const STREAM = "skill";
+
 const SkillsPage: React.FC = () => {
-  const router = useRouter();
   const [q, setQ] = useState("");
   const [active, setActive] = useState<string>("all");
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [programs, setPrograms] = useState<Program[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const flatSkills = useMemo(
-    () =>
-      SKILL_CATEGORIES.flatMap((c) =>
-        c.skills.map((s) => ({
-          ...s,
-          categoryKey: c.key,
-          categoryLabel: c.label,
-          slug: slugify(s.name),
-        }))
-      ),
-    []
-  );
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const [cats, progs] = await Promise.all([
+          getCategories(STREAM),
+          getPrograms(STREAM),
+        ]);
+        if (!cancelled) {
+          setCategories(cats);
+          setPrograms(progs);
+        }
+      } catch (e) {
+        if (!cancelled) setError(e instanceof Error ? e.message : "Failed to load");
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const flatSkills = useMemo(() => {
+    const labelByCat = new Map(categories.map((c) => [c.id, c.label]));
+    const keyByCat = new Map(categories.map((c) => [c.id, c.key]));
+    return programs.map((p) => ({
+      ...p,
+      categoryKey: keyByCat.get(p.category_id) ?? "",
+      categoryLabel: labelByCat.get(p.category_id) ?? "",
+    }));
+  }, [categories, programs]);
 
   const filtered = useMemo(() => {
     const term = q.trim().toLowerCase();
@@ -32,7 +62,7 @@ const SkillsPage: React.FC = () => {
       const byText =
         !term ||
         s.name.toLowerCase().includes(term) ||
-        s.short.toLowerCase().includes(term) ||
+        (s.short ?? "").toLowerCase().includes(term) ||
         s.categoryLabel.toLowerCase().includes(term);
       return byCat && byText;
     });
@@ -78,7 +108,7 @@ const SkillsPage: React.FC = () => {
                 All
               </button>
 
-              {SKILL_CATEGORIES.map((c) => (
+              {categories.map((c) => (
                 <button
                   key={c.key}
                   onClick={() => setActive(c.key)}
@@ -90,7 +120,10 @@ const SkillsPage: React.FC = () => {
                   title={c.label}
                 >
                   <span className="mr-1.5 inline-flex text-base sm:text-sm">
-                    {c.icon}
+                    <CategoryIcon
+                      name={c.icon}
+                      className={`w-5 h-5 ${c.icon_color ?? ""}`}
+                    />
                   </span>
                   <span className="text-xs sm:text-sm">{c.label}</span>
                 </button>
@@ -118,6 +151,16 @@ const SkillsPage: React.FC = () => {
 
       {/* Results */}
       <section className="mx-auto max-w-7xl px-3 sm:px-4 md:px-6 lg:px-8 py-4 sm:py-6 md:py-8">
+        {error && (
+          <div className="mb-4 rounded-xl border border-rose-500/40 bg-rose-950/40 p-4 text-sm text-rose-200">
+            Couldn&apos;t load skills: {error}
+          </div>
+        )}
+
+        {loading ? (
+          <div className="py-20 text-center text-slate-400">Loading skills…</div>
+        ) : (
+          <>
         <div className="mb-3 sm:mb-4 text-xs sm:text-sm text-slate-400">
           Showing{" "}
           <span className="font-medium text-orange-400">{filtered.length}</span>{" "}
@@ -163,6 +206,8 @@ const SkillsPage: React.FC = () => {
               <span className="font-semibold text-orange-400">Nutrition</span>.
             </p>
           </div>
+        )}
+          </>
         )}
       </section>
 

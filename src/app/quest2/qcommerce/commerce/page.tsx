@@ -1,32 +1,61 @@
 "use client";
-import { COMMERCE_CATEGORIES, slugify } from "@/data/commerce";
-
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import {
+  getCategories,
+  getPrograms,
+  type Category,
+  type Program,
+} from "@/lib/catalog";
+import CategoryIcon from "@/components/CategoryIcon";
 
 const chip =
   "px-3 py-1.5 rounded-full border transition shadow-sm text-sm whitespace-nowrap";
 
+const STREAM = "commerce";
+
 /* ----------------------------- Component ----------------------------- */
 
 const CommerceDegreesPage: React.FC = () => {
-  const router = useRouter();
   const [q, setQ] = useState("");
   const [active, setActive] = useState<string>("all");
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [programs, setPrograms] = useState<Program[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const flatDegrees = useMemo(
-    () =>
-      COMMERCE_CATEGORIES.flatMap((c) =>
-        c.degrees.map((d) => ({
-          ...d,
-          categoryKey: c.key,
-          categoryLabel: c.label,
-          slug: slugify(d.name),
-        }))
-      ),
-    []
-  );
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const [cats, progs] = await Promise.all([
+          getCategories(STREAM),
+          getPrograms(STREAM),
+        ]);
+        if (!cancelled) {
+          setCategories(cats);
+          setPrograms(progs);
+        }
+      } catch (e) {
+        if (!cancelled) setError(e instanceof Error ? e.message : "Failed to load");
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const flatDegrees = useMemo(() => {
+    const labelByCat = new Map(categories.map((c) => [c.id, c.label]));
+    const keyByCat = new Map(categories.map((c) => [c.id, c.key]));
+    return programs.map((p) => ({
+      ...p,
+      categoryKey: keyByCat.get(p.category_id) ?? "",
+      categoryLabel: labelByCat.get(p.category_id) ?? "",
+    }));
+  }, [categories, programs]);
 
   const filtered = useMemo(() => {
     const term = q.trim().toLowerCase();
@@ -35,7 +64,7 @@ const CommerceDegreesPage: React.FC = () => {
       const byText =
         !term ||
         d.name.toLowerCase().includes(term) ||
-        d.short.toLowerCase().includes(term) ||
+        (d.short ?? "").toLowerCase().includes(term) ||
         d.categoryLabel.toLowerCase().includes(term);
       return byCat && byText;
     });
@@ -76,7 +105,7 @@ const CommerceDegreesPage: React.FC = () => {
             All
           </button>
 
-          {COMMERCE_CATEGORIES.map((c) => (
+          {categories.map((c) => (
             <button
               key={c.key}
               onClick={() => setActive(c.key)}
@@ -87,7 +116,12 @@ const CommerceDegreesPage: React.FC = () => {
               }`}
               title={c.label}
             >
-              <span className="mr-2 inline-flex">{c.icon}</span>
+              <span className="mr-2 inline-flex">
+                <CategoryIcon
+                  name={c.icon}
+                  className={`w-5 h-5 ${c.icon_color ?? ""}`}
+                />
+              </span>
               {c.label}
             </button>
           ))}
@@ -111,6 +145,16 @@ const CommerceDegreesPage: React.FC = () => {
 
       {/* Results */}
       <section className="max-w-7xl mx-auto px-4 py-6">
+        {error && (
+          <div className="mb-4 rounded-xl border border-rose-500/40 bg-rose-950/40 p-4 text-sm text-rose-200">
+            Couldn&apos;t load degrees: {error}
+          </div>
+        )}
+
+        {loading ? (
+          <div className="py-20 text-center text-slate-400">Loading degrees…</div>
+        ) : (
+          <>
         <div className="mb-3 text-sm text-slate-400">
           Showing{" "}
           <span className="font-medium text-emerald-400">
@@ -146,6 +190,8 @@ const CommerceDegreesPage: React.FC = () => {
             No matches. Try a different keyword (e.g., <b>CA</b>, <b>B.Com</b>,{" "}
             <b>Finance</b>).
           </div>
+        )}
+          </>
         )}
       </section>
 

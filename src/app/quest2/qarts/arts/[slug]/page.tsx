@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
-import { ARTS_CATEGORIES, slugify } from "@/data/art";
+import { getProgramBySlug, getCategoryById } from "@/lib/catalog";
+import CategoryIcon from "@/components/CategoryIcon";
 import {
   BookOpen,
   Clock,
@@ -13,13 +14,8 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 
-export async function generateStaticParams() {
-  return ARTS_CATEGORIES.flatMap((category) =>
-    category.degrees.map((degree) => ({
-      slug: slugify(degree.name),
-    }))
-  );
-}
+// Render on-demand with ISR caching (avoids hammering the DB at build time).
+export const revalidate = 3600;
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -28,27 +24,25 @@ interface PageProps {
 const Page = async ({ params }: PageProps) => {
   const { slug } = await params;
 
-  const allDegrees = ARTS_CATEGORIES.flatMap((category) =>
-    category.degrees.map((degree) => ({
-      ...degree,
-      category: category.label,
-      categoryIcon: category.icon,
-      categoryIconColor: category.iconColor,
-      slug: slugify(degree.name),
-    }))
-  );
+  const program = await getProgramBySlug("arts", slug);
+  if (!program) return notFound();
 
-  const degree = allDegrees.find((d) => d.slug === slug);
+  const category = await getCategoryById(program.category_id);
 
-  if (!degree) return notFound();
+  const degree = {
+    name: program.name,
+    short: program.short ?? "",
+    fullDescription: program.full_description ?? "",
+    duration: program.duration ?? "",
+    eligibility: program.eligibility ?? "",
+    fees: program.fees ?? "",
+    category: category?.label ?? "",
+    categoryIcon: category?.icon ?? null,
+    categoryIconColor: category?.icon_color ?? "",
+  };
 
-  // Syllabus is already an array in the data structure
-  const syllabusItems = degree.syllabus;
-
-  // Career opportunities is already an array
-  const careerList = degree.careerOpportunities;
-
-  const CategoryIcon = degree.categoryIcon;
+  const syllabusItems = program.syllabus ?? [];
+  const careerList = program.career_opportunities ?? [];
 
   return (
     <div className="min-h-screen bg-gradient-to-br  from-slate-900 via-slate-800 to-slate-900">
@@ -77,7 +71,10 @@ const Page = async ({ params }: PageProps) => {
           {/* Title Section */}
           <div className="space-y-4">
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-violet-500/20 border border-violet-500/30">
-              <CategoryIcon className={`w-4 h-4 ${degree.categoryIconColor}`} />
+              <CategoryIcon
+                name={degree.categoryIcon}
+                className={`w-4 h-4 ${degree.categoryIconColor}`}
+              />
               <span className="text-sm font-medium text-violet-300">
                 {degree.category}
               </span>

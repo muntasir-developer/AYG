@@ -64,12 +64,12 @@ const HeroSection = () => {
       <div className="hidden md:block absolute top-40 right-20 w-16 h-16 border-2 border-orange-500/30 rounded-full animate-float animation-delay-2000"></div>
       <div className="hidden md:block absolute bottom-40 left-20 w-12 h-12 bg-gradient-to-br from-blue-500/20 to-orange-500/20 rounded-lg animate-float animation-delay-4000"></div>
 
-      <div className="relative z-10 max-w-7xl mx-auto pt-18 lg:pt-0 px-4">
-        <div className="grid lg:grid-cols-2 gap-8 lg:gap-24 items-center">
+      <div className="relative z-10 max-w-7xl mx-auto pt-18 lg:pt-28 px-4">
+        <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 xl:gap-24 items-center">
           {/* Left Content */}
           <div className=" lg:text-left text-center">
-            <div className="lg:hidden absolute top-4 left-36">
-              <span className="text-3xl  tracking-0">
+            <div className="lg:hidden absolute top-4 left-1/2 -translate-x-1/2">
+              <span className="text-3xl tracking-0">
                 <span className="font-bold">AYG</span>
               </span>
             </div>
@@ -83,7 +83,7 @@ const HeroSection = () => {
             </div>
 
             {/* Hero Heading */}
-            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-tight mb-4 lg:mb-6">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-6xl xl:text-7xl font-black tracking-tight mb-4 lg:mb-6">
               <span className="block text-white">Navigate Your</span>
               <span className="block bg-gradient-to-r from-blue-400 via-blue-500 to-orange-500 bg-clip-text text-transparent">
                 Career Journey
@@ -151,9 +151,9 @@ const HeroSection = () => {
           </div>
 
           {/* Right Content - Interactive Graph/Cards */}
-          <div className=" pb-20   sm:p-2 flex items-center  justify-center">
+          <div className="pb-8 sm:pb-12 lg:pb-2 sm:p-2 flex items-center justify-center">
             <div className="max-w-8xl w-full">
-              <div className="relative mt-12 lg:mt-0">
+              <div className="relative mt-8 lg:mt-0">
                 {/* Animated Success Graph Card */}
                 <div className="relative bg-gradient-to-br from-slate-900 to-slate-800 border border-slate-700 rounded-2xl sm:rounded-3xl p-4 sm:p-6 lg:p-8 shadow-2xl overflow-hidden">
                   <div className="flex items-center justify-between mb-4 sm:mb-6 flex-wrap gap-3 relative z-10">
@@ -474,7 +474,7 @@ const HeroSection = () => {
                 </div>
 
                 {/* Floating Stat Cards */}
-                <div className="absolute -top-4 -right-4 sm:-top-6 sm:-right-6 bg-gradient-to-br from-blue-600 to-blue-700 rounded-xl sm:rounded-2xl p-3 sm:p-4 shadow-2xl border border-blue-500/50 animate-bounce z-20">
+                <div className="hidden lg:block absolute -top-8 -right-6 bg-gradient-to-br from-blue-600 to-blue-700 rounded-xl sm:rounded-2xl p-3 sm:p-4 shadow-2xl border border-blue-500/50 animate-bounce z-20">
                   <div className="text-white text-lg sm:text-2xl font-bold">
                     2.5K+
                   </div>
@@ -484,7 +484,7 @@ const HeroSection = () => {
                 </div>
 
                 <div
-                  className="absolute -bottom-4 -left-4 sm:-bottom-6 sm:-left-6 bg-gradient-to-br from-orange-600 to-orange-700 rounded-xl sm:rounded-2xl p-3 sm:p-4 shadow-2xl border border-orange-500/50 animate-bounce z-20"
+                  className="hidden lg:block absolute -bottom-6 -left-16 bg-gradient-to-br from-orange-600 to-orange-700 rounded-xl sm:rounded-2xl p-3 sm:p-4 shadow-2xl border border-orange-500/50 animate-bounce z-20"
                   style={{ animationDelay: "0.5s" }}
                 >
                   <div className="text-white text-lg sm:text-2xl font-bold">

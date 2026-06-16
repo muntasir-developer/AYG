@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { COMMERCE_CATEGORIES, slugify } from "@/data/commerce";
+import { getProgramBySlug, getCategoryById } from "@/lib/catalog";
 import {
   BookOpen,
   Clock,
@@ -14,27 +14,28 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 
-export async function generateStaticParams() {
-  return COMMERCE_CATEGORIES.flatMap((category) =>
-    category.degrees.map((degree) => ({
-      params: { slug: slugify(degree.name) }, // wrap in `params`
-    }))
-  );
-}
+// Render on-demand with ISR caching (avoids hammering the DB at build time).
+export const revalidate = 3600;
 
-const Page = async ({ params }: { params: { slug: string } }) => {
-  const { slug } = await params; // ✅ FIX
-  const allDegrees = COMMERCE_CATEGORIES.flatMap((category) =>
-    category.degrees.map((degree) => ({
-      ...degree,
-      category: category.label,
-      slug: slugify(degree.name),
-    }))
-  );
+const Page = async ({ params }: { params: Promise<{ slug: string }> }) => {
+  const { slug } = await params;
 
-  const degree = allDegrees.find((d) => d.slug === slug);
+  const program = await getProgramBySlug("commerce", slug);
+  if (!program) return notFound();
 
-  if (!degree) return notFound();
+  const category = await getCategoryById(program.category_id);
+
+  const degree = {
+    name: program.name,
+    short: program.short ?? "",
+    fullDescription: program.full_description ?? "",
+    duration: program.duration ?? "",
+    eligibility: program.eligibility ?? "",
+    fees: program.fees ?? "",
+    category: category?.label ?? "",
+    syllabus: program.syllabus ?? [],
+    careerOpportunities: program.career_opportunities ?? [],
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 ">

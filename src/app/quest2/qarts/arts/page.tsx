@@ -1,31 +1,63 @@
 "use client";
-import { ARTS_CATEGORIES, slugify } from "@/data/art";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import {
+  getCategories,
+  getPrograms,
+  type Category,
+  type Program,
+} from "@/lib/catalog";
+import CategoryIcon from "@/components/CategoryIcon";
 
 const chip =
   "px-3 py-1.5 rounded-full border border-gray-700 bg-gray-800 hover:bg-gray-700 text-sm transition shadow-sm";
 
+const STREAM = "arts";
+
 const ArtsDegreesPage: React.FC = () => {
-  const router = useRouter();
   const [q, setQ] = useState("");
   const [active, setActive] = useState<string>("all");
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [programs, setPrograms] = useState<Program[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const flatDegrees = useMemo(
-    () =>
-      ARTS_CATEGORIES.flatMap((c) =>
-        c.degrees.map((d) => ({
-          ...d,
-          categoryKey: c.key,
-          categoryLabel: c.label,
-          categoryIcon: c.icon,
-          categoryIconColor: c.iconColor,
-          slug: slugify(d.name),
-        }))
-      ),
-    []
-  );
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const [cats, progs] = await Promise.all([
+          getCategories(STREAM),
+          getPrograms(STREAM),
+        ]);
+        if (!cancelled) {
+          setCategories(cats);
+          setPrograms(progs);
+        }
+      } catch (e) {
+        if (!cancelled) setError(e instanceof Error ? e.message : "Failed to load");
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const flatDegrees = useMemo(() => {
+    const byCat = new Map(categories.map((c) => [c.id, c]));
+    return programs.map((p) => {
+      const c = byCat.get(p.category_id);
+      return {
+        ...p,
+        categoryKey: c?.key ?? "",
+        categoryLabel: c?.label ?? "",
+        categoryIcon: c?.icon ?? null,
+        categoryIconColor: c?.icon_color ?? "",
+      };
+    });
+  }, [categories, programs]);
 
   const filtered = useMemo(() => {
     const term = q.trim().toLowerCase();
@@ -34,7 +66,7 @@ const ArtsDegreesPage: React.FC = () => {
       const byText =
         !term ||
         d.name.toLowerCase().includes(term) ||
-        d.short.toLowerCase().includes(term) ||
+        (d.short ?? "").toLowerCase().includes(term) ||
         d.categoryLabel.toLowerCase().includes(term);
       return byCat && byText;
     });
@@ -74,30 +106,28 @@ const ArtsDegreesPage: React.FC = () => {
           >
             All
           </button>
-          {ARTS_CATEGORIES.map((c) => {
-            const Icon = c.icon;
-            return (
-              <button
-                key={c.key}
-                onClick={() => setActive(c.key)}
-                className={`${chip} ${
-                  active === c.key
-                    ? "bg-indigo-600 text-white border-indigo-600 shadow-indigo-500/50"
-                    : "text-gray-300 border-gray-700"
-                }`}
-                title={c.label}
-              >
-                <span className="mr-2 inline-flex">
-                  <Icon
-                    className={`w-4 h-4 ${
-                      active === c.key ? "text-white" : c.iconColor
-                    }`}
-                  />
-                </span>
-                {c.label}
-              </button>
-            );
-          })}
+          {categories.map((c) => (
+            <button
+              key={c.key}
+              onClick={() => setActive(c.key)}
+              className={`${chip} ${
+                active === c.key
+                  ? "bg-indigo-600 text-white border-indigo-600 shadow-indigo-500/50"
+                  : "text-gray-300 border-gray-700"
+              }`}
+              title={c.label}
+            >
+              <span className="mr-2 inline-flex">
+                <CategoryIcon
+                  name={c.icon}
+                  className={`w-4 h-4 ${
+                    active === c.key ? "text-white" : c.icon_color ?? ""
+                  }`}
+                />
+              </span>
+              {c.label}
+            </button>
+          ))}
         </div>
       </section>
 
@@ -120,6 +150,16 @@ const ArtsDegreesPage: React.FC = () => {
 
       {/* Results */}
       <section className="max-w-7xl mx-auto px-4 py-6">
+        {error && (
+          <div className="mb-4 rounded-xl border border-rose-500/40 bg-rose-950/40 p-4 text-sm text-rose-200">
+            Couldn&apos;t load degrees: {error}
+          </div>
+        )}
+
+        {loading ? (
+          <div className="py-20 text-center text-gray-400">Loading degrees…</div>
+        ) : (
+          <>
         <div className="mb-3 text-sm text-gray-400">
           Showing{" "}
           <span className="font-medium text-gray-200">{filtered.length}</span>{" "}
@@ -127,30 +167,30 @@ const ArtsDegreesPage: React.FC = () => {
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {filtered.map((d) => {
-            const Icon = d.categoryIcon;
-            return (
-              <Link
-                key={d.slug}
-                href={`/quest2/qarts/arts/${d.slug}`}
-                className="group block rounded-2xl border border-gray-800 bg-gray-900/50 backdrop-blur-sm p-5 shadow-lg hover:shadow-xl hover:shadow-indigo-500/10 hover:border-indigo-500/50 hover:bg-gray-900/80 transition-all duration-300"
-              >
-                <div className="mb-2 flex items-center gap-2">
-                  <Icon className={`w-4 h-4 ${d.categoryIconColor}`} />
-                  <span className="text-xs font-medium uppercase tracking-wide text-gray-500">
-                    {d.categoryLabel}
-                  </span>
-                </div>
-                <h3 className="text-base font-semibold text-gray-100 group-hover:text-indigo-400 transition">
-                  {d.name}
-                </h3>
-                <p className="mt-1 text-sm text-gray-400">{d.short}</p>
-                <div className="mt-4 flex items-center text-sm font-medium text-indigo-400 group-hover:text-indigo-300">
-                  Learn more <span className="ml-1">→</span>
-                </div>
-              </Link>
-            );
-          })}
+          {filtered.map((d) => (
+            <Link
+              key={d.slug}
+              href={`/quest2/qarts/arts/${d.slug}`}
+              className="group block rounded-2xl border border-gray-800 bg-gray-900/50 backdrop-blur-sm p-5 shadow-lg hover:shadow-xl hover:shadow-indigo-500/10 hover:border-indigo-500/50 hover:bg-gray-900/80 transition-all duration-300"
+            >
+              <div className="mb-2 flex items-center gap-2">
+                <CategoryIcon
+                  name={d.categoryIcon}
+                  className={`w-4 h-4 ${d.categoryIconColor}`}
+                />
+                <span className="text-xs font-medium uppercase tracking-wide text-gray-500">
+                  {d.categoryLabel}
+                </span>
+              </div>
+              <h3 className="text-base font-semibold text-gray-100 group-hover:text-indigo-400 transition">
+                {d.name}
+              </h3>
+              <p className="mt-1 text-sm text-gray-400">{d.short}</p>
+              <div className="mt-4 flex items-center text-sm font-medium text-indigo-400 group-hover:text-indigo-300">
+                Learn more <span className="ml-1">→</span>
+              </div>
+            </Link>
+          ))}
         </div>
 
         {/* Empty state */}
@@ -166,6 +206,8 @@ const ArtsDegreesPage: React.FC = () => {
               <b className="text-gray-200">Journalism</b>.
             </p>
           </div>
+        )}
+          </>
         )}
       </section>
 

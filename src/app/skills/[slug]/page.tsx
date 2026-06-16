@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { SKILL_CATEGORIES, slugify } from "@/data/skill";
+import { getProgramBySlug, getCategoryById } from "@/lib/catalog";
 import {
   BookOpen,
   Clock,
@@ -14,36 +14,29 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 
-export async function generateStaticParams() {
-  return SKILL_CATEGORIES.flatMap((category) =>
-    category.skills.map((skill) => ({
-      slug: slugify(skill.name),
-    }))
-  );
-}
+// Render on-demand with ISR caching (avoids hammering the DB at build time).
+export const revalidate = 3600;
 
-const Page = async ({ params }: { params: { slug: string } }) => {
-  const { slug } = await params; // ✅ FIXED
+const Page = async ({ params }: { params: Promise<{ slug: string }> }) => {
+  const { slug } = await params;
 
-  const allSkills = SKILL_CATEGORIES.flatMap((category) =>
-    category.skills.map((skill) => ({
-      ...skill,
-      category: category.label,
-      slug: slugify(skill.name),
-    }))
-  );
+  const program = await getProgramBySlug("skill", slug);
+  if (!program) return notFound();
 
-  const skill = allSkills.find((s) => s.slug === slug);
+  const category = await getCategoryById(program.category_id);
 
-  if (!skill) return notFound();
+  const skill = {
+    name: program.name,
+    short: program.short ?? "",
+    fullDescription: program.full_description ?? "",
+    duration: program.duration ?? "",
+    eligibility: program.eligibility ?? "",
+    fees: program.fees ?? "",
+    category: category?.label ?? "",
+  };
 
-  // Handle syllabus - now it's an array
-  const syllabusItems = Array.isArray(skill.syllabus) ? skill.syllabus : [];
-
-  // Handle career opportunities - now it's an array
-  const careerList = Array.isArray(skill.careerOpportunities)
-    ? skill.careerOpportunities
-    : [];
+  const syllabusItems = program.syllabus ?? [];
+  const careerList = program.career_opportunities ?? [];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 ">

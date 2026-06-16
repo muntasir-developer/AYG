@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { SCIENCE_CATEGORIES, slugify } from "@/data/science";
+import { getProgramBySlug, getCategoryById } from "@/lib/catalog";
 import {
   BookOpen,
   Clock,
@@ -14,58 +14,32 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 
-export async function generateStaticParams() {
-  return SCIENCE_CATEGORIES.flatMap((category) =>
-    category.degrees.map((degree) => ({
-      slug: slugify(degree.name),
-    }))
-  );
-}
+// Render detail pages on-demand and cache them (ISR). This avoids firing 110+
+// parallel DB requests at build time, which exceeds the backend request timeout.
+export const revalidate = 3600; // re-fetch from the DB at most once per hour
 
 const Page = async ({ params }: { params: Promise<{ slug: string }> }) => {
   const { slug } = await params;
 
-  const allDegrees = SCIENCE_CATEGORIES.flatMap((category) =>
-    category.degrees.map((degree) => ({
-      ...degree,
-      category: category.label,
-      slug: slugify(degree.name),
-    }))
-  );
+  const program = await getProgramBySlug("science", slug);
 
-  const degree = allDegrees.find((d) => d.slug === slug);
+  if (!program) return notFound();
 
-  if (!degree) return notFound();
+  const category = await getCategoryById(program.category_id);
 
-  // Parse syllabus - handles both comma-separated and newline-separated formats
-  const parseSyllabus = (text: string) => {
-    // Check if text contains commas (comma-separated format)
-    if (text.includes(",")) {
-      return text
-        .split(",")
-        .map((item) => item.trim())
-        .filter((item) => item);
-    }
-    // Otherwise treat as newline-separated
-    return text
-      .split("\n")
-      .map((line) => line.trim())
-      .filter((line) => line);
+  // Map DB columns onto the shape this view expects.
+  const degree = {
+    name: program.name,
+    short: program.short ?? "",
+    fullDescription: program.full_description ?? "",
+    duration: program.duration ?? "",
+    eligibility: program.eligibility ?? "",
+    fees: program.fees ?? "",
+    category: category?.label ?? "",
   };
 
-  const syllabusItems = parseSyllabus(degree.syllabus);
-
-  // Parse career opportunities - assuming it's a comma-separated string or similar
-  const parseCareerList = (text: string) => {
-    return text
-      .split(/[,\n]/)
-      .map((item) => item.trim())
-      .filter((item) => item);
-  };
-
-  const careerList = parseCareerList(
-    degree.careerOpportunities || degree.careerOpportunities || ""
-  );
+  const syllabusItems = program.syllabus ?? [];
+  const careerList = program.career_opportunities ?? [];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">

@@ -6,9 +6,11 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "catalog": "tsx scripts/catalog.mts"
   },
   "dependencies": {
+    "@insforge/sdk": "^1.4.0",
     "framer-motion": "^12.23.12",
     "lucide-react": "^0.541.0",
     "next": "^16.0.4",
@@ -24,6 +26,7 @@
     "eslint": "^9",
     "eslint-config-next": "15.4.4",
     "tailwindcss": "^4",
+    "tsx": "^4.22.4",
     "typescript": "^5"
   }
 }
