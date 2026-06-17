@@ -2,7 +2,7 @@
 import React from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { GraduationCap, CheckCircle, Clock } from "lucide-react";
+import { GraduationCap, CheckCircle, Award } from "lucide-react";
 
 const Page = () => {
   const router = useRouter();
@@ -135,18 +135,18 @@ const Page = () => {
             </div>
           </button>
 
-          {/* No Button */}
+          {/* Passed 10th Button */}
           <button
-            onClick={() => router.push("/no")}
-            className="group relative w-full py-3.5 sm:py-4 px-5 sm:px-6 bg-white/5 backdrop-blur-sm
-                       text-white font-semibold text-sm sm:text-base rounded-xl sm:rounded-xl shadow-lg 
-                       border-2 border-blue-400/30 hover:border-blue-400/50 hover:bg-white/10
-                       hover:shadow-xl hover:scale-[1.02] active:scale-[0.98]
-                       transition-all duration-300 overflow-hidden"
+            onClick={() => router.push("/quest10")}
+            className="group relative w-full py-3.5 sm:py-4 px-5 sm:px-6 bg-gradient-to-r from-emerald-600 to-teal-600
+                       text-white font-semibold text-sm sm:text-base rounded-xl sm:rounded-xl shadow-xl shadow-emerald-500/30
+                       hover:shadow-2xl hover:shadow-emerald-500/50 hover:scale-[1.02] active:scale-[0.98]
+                       transition-all duration-300 overflow-hidden border border-emerald-400/20"
           >
+            <div className="absolute inset-0 bg-gradient-to-r from-emerald-500 to-teal-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
             <div className="relative flex items-center justify-center gap-2 sm:gap-3">
-              <Clock className="w-4 h-4 sm:w-5 sm:h-5" strokeWidth={2} />
-              <span>Not yet, still studying</span>
+              <Award className="w-4 h-4 sm:w-5 sm:h-5" strokeWidth={2} />
+              <span>Yes, I have passed 10th</span>
               <span className="transition-transform duration-300 group-hover:translate-x-1">
                 →
               </span>

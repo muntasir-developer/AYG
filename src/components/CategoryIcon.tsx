@@ -28,6 +28,18 @@ import {
   Camera,
   Theater,
   PenTool,
+  // after-10th tracks
+  Cog,
+  HeartPulse,
+  Hammer,
+  Zap,
+  Car,
+  Building2,
+  Cpu,
+  Scissors,
+  Utensils,
+  Pill,
+  Microscope,
   type LucideIcon,
 } from "lucide-react";
 
@@ -58,6 +70,17 @@ const ICONS: Record<string, LucideIcon> = {
   Camera,
   Theater,
   PenTool,
+  Cog,
+  HeartPulse,
+  Hammer,
+  Zap,
+  Car,
+  Building2,
+  Cpu,
+  Scissors,
+  Utensils,
+  Pill,
+  Microscope,
   // alias: source data imported this as `PenToolIcon`
   PenToolIcon: PenTool,
 };
