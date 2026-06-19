@@ -76,7 +76,7 @@ const SkillsPage: React.FC = () => {
           {/* Title and Search */}
           <div className="flex flex-col gap-3">
             <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold tracking-tight bg-gradient-to-r from-amber-400 via-orange-400 to-red-400 bg-clip-text text-transparent leading-tight">
-              Skills After 12th (India) — Expanded Master List
+              Skills & Certificate Courses (India)
             </h1>
 
             <div className="w-full">

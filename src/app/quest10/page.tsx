@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import { useRouter } from "next/navigation";
-import { BookOpen, Wrench, Cog, HeartPulse, ArrowLeft } from "lucide-react";
+import { BookOpen, Wrench, Cog, HeartPulse, Award, ArrowLeft } from "lucide-react";
 
 const TRACKS = [
   {
@@ -84,7 +84,7 @@ const Page: React.FC = () => {
         </div>
 
         {/* Tracks */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
           {TRACKS.map((item) => (
             <button
               key={item.title}
@@ -106,6 +106,29 @@ const Page: React.FC = () => {
             </button>
           ))}
         </div>
+
+        {/* Skills & Certificates — full-width, links to the complete skills catalog */}
+        <button
+          onClick={() => router.push("/skills")}
+          className="group relative w-full flex items-center gap-4 rounded-xl p-5 text-left text-white shadow-xl
+                     border border-white/10 bg-gradient-to-r from-violet-600/90 to-fuchsia-600/90
+                     hover:-translate-y-1 hover:scale-[1.01] hover:shadow-2xl active:scale-95 transition-all duration-500 overflow-hidden"
+        >
+          <div className="p-3 rounded-full bg-white/10 group-hover:bg-white/20 transition-all group-hover:rotate-6 shrink-0">
+            <Award className="w-8 h-8" strokeWidth={1.5} />
+          </div>
+          <div className="flex-1">
+            <span className="block font-semibold text-base sm:text-lg">
+              Skills & Certificates
+            </span>
+            <span className="block text-xs sm:text-sm opacity-80 font-light mt-0.5">
+              Learn a job-ready skill and earn a certificate — 200+ courses across tech, design, trades & more
+            </span>
+          </div>
+          <span className="transition-transform duration-300 group-hover:translate-x-1 text-xl shrink-0">
+            →
+          </span>
+        </button>
 
         {/* Bottom Line */}
         <div className="mt-8 flex justify-center">
