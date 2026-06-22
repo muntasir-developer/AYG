@@ -11,6 +11,9 @@ export type Category = {
   sort_order: number;
 };
 
+export type FreeResource = { label: string; url: string; type?: string };
+export type Faq = { q: string; a: string };
+
 /** A row from the `programs` table. */
 export type Program = {
   id: string;
@@ -26,11 +29,22 @@ export type Program = {
   fees: string | null;
   syllabus: string[];
   sort_order: number;
+  // Rich "landing page" fields (present on detail queries only).
+  free_resources?: FreeResource[];
+  roadmap?: string[];
+  tools?: string[];
+  certifications?: string[];
+  recruiters?: string[];
+  salary_range?: string | null;
+  faqs?: Faq[];
 };
 
 const CATEGORY_COLS = "id,stream,key,label,icon,icon_color,sort_order";
-const PROGRAM_COLS =
+// Lightweight columns for list views (avoids shipping the heavy landing fields).
+const PROGRAM_LIST_COLS =
   "id,category_id,stream,name,slug,short,full_description,duration,eligibility,career_opportunities,fees,syllabus,sort_order";
+// Full columns for a single detail/landing page.
+const PROGRAM_DETAIL_COLS = `${PROGRAM_LIST_COLS},free_resources,roadmap,tools,certifications,recruiters,salary_range,faqs`;
 
 /**
  * Read the catalog directly from InsForge's REST endpoint instead of going
@@ -66,7 +80,7 @@ export async function getCategories(stream: string): Promise<Category[]> {
 /** All programs for a stream, ordered for display. */
 export async function getPrograms(stream: string): Promise<Program[]> {
   return rest<Program[]>(
-    `programs?stream=eq.${encodeURIComponent(stream)}&order=sort_order.asc&select=${PROGRAM_COLS}`
+    `programs?stream=eq.${encodeURIComponent(stream)}&order=sort_order.asc&select=${PROGRAM_LIST_COLS}`
   );
 }
 
@@ -84,7 +98,7 @@ export async function getProgramBySlug(
   slug: string
 ): Promise<Program | null> {
   const rows = await rest<Program[]>(
-    `programs?stream=eq.${encodeURIComponent(stream)}&slug=eq.${encodeURIComponent(slug)}&limit=1&select=${PROGRAM_COLS}`
+    `programs?stream=eq.${encodeURIComponent(stream)}&slug=eq.${encodeURIComponent(slug)}&limit=1&select=${PROGRAM_DETAIL_COLS}`
   );
   return rows[0] ?? null;
 }
