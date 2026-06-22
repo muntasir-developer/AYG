@@ -37,6 +37,7 @@ export type Program = {
   recruiters?: string[];
   salary_range?: string | null;
   faqs?: Faq[];
+  outcomes?: string[];
 };
 
 const CATEGORY_COLS = "id,stream,key,label,icon,icon_color,sort_order";
@@ -44,7 +45,7 @@ const CATEGORY_COLS = "id,stream,key,label,icon,icon_color,sort_order";
 const PROGRAM_LIST_COLS =
   "id,category_id,stream,name,slug,short,full_description,duration,eligibility,career_opportunities,fees,syllabus,sort_order";
 // Full columns for a single detail/landing page.
-const PROGRAM_DETAIL_COLS = `${PROGRAM_LIST_COLS},free_resources,roadmap,tools,certifications,recruiters,salary_range,faqs`;
+const PROGRAM_DETAIL_COLS = `${PROGRAM_LIST_COLS},free_resources,roadmap,tools,certifications,recruiters,salary_range,faqs,outcomes`;
 
 /**
  * Read the catalog directly from InsForge's REST endpoint instead of going

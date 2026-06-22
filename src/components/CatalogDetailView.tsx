@@ -15,6 +15,7 @@ import {
   Building2,
   TrendingUp,
   HelpCircle,
+  Trophy,
 } from "lucide-react";
 import Link from "next/link";
 import type { Program } from "@/lib/catalog";
@@ -71,6 +72,7 @@ export default function CatalogDetailView({
   const certifications = program.certifications ?? [];
   const recruiters = program.recruiters ?? [];
   const faqs = program.faqs ?? [];
+  const outcomes = program.outcomes ?? [];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
@@ -127,6 +129,29 @@ export default function CatalogDetailView({
                 <p className="text-gray-300 leading-relaxed">
                   {program.full_description}
                 </p>
+              </section>
+            )}
+
+            {outcomes.length > 0 && (
+              <section className="bg-gradient-to-br from-amber-500/10 to-yellow-500/5 backdrop-blur-sm rounded-2xl p-8 border border-amber-500/20">
+                <div className="flex items-center gap-3 mb-2">
+                  <Trophy className="w-6 h-6 text-amber-400" />
+                  <h2 className="text-2xl font-bold text-white">What You Can Achieve</h2>
+                </div>
+                <p className="text-sm text-amber-200/70 mb-6">
+                  Where this can take you — your next steps and goals after this.
+                </p>
+                <div className="space-y-3">
+                  {outcomes.map((o, i) => (
+                    <div
+                      key={i}
+                      className="flex items-start gap-3 p-3 rounded-lg bg-white/5 border border-white/10"
+                    >
+                      <Trophy className="w-5 h-5 text-amber-300 flex-shrink-0 mt-0.5" />
+                      <span className="text-sm text-gray-200 leading-relaxed">{o}</span>
+                    </div>
+                  ))}
+                </div>
               </section>
             )}
 

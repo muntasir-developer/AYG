@@ -37,6 +37,17 @@ const FAMILY_BY_KEY: Record<string, Family> = {
   agriculture_nature: "vocational",
   languages_writing: "language",
   soft_skills: "soft",
+  // after-10th tracks
+  "hs-streams": "academic",
+  engineering: "tech",
+  "computer-electronics": "tech",
+  "applied-science": "academic",
+  "design-management": "design",
+  agriculture: "vocational",
+  "engineering-trades": "vocational",
+  "non-engineering-trades": "vocational",
+  paramedical: "vocational",
+  vocational: "vocational",
 };
 
 export function learnResources(name: string, categoryKey: string): LearnGroup[] {

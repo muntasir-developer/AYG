@@ -19,6 +19,8 @@ const Page = async ({ params }: { params: Promise<{ slug: string }> }) => {
       categoryLabel={category?.label ?? ""}
       backHref={T.basePath}
       backLabel={`Back to ${T.backLabel}`}
+      ctaLabel="Start Learning for Free"
+      ctaHref={`${T.basePath}/${slug}/learn`}
     />
   );
 };
