@@ -1,14 +1,12 @@
 import { notFound } from "next/navigation";
-import { getPrograms, getProgramBySlug, getCategoryById } from "@/lib/catalog";
+import { getProgramBySlug, getCategoryById } from "@/lib/catalog";
 import CatalogDetailView from "@/components/CatalogDetailView";
 import { AFTER10_TRACKS } from "@/lib/after10";
 
 const T = AFTER10_TRACKS.paravoc;
 
-export async function generateStaticParams() {
-  const programs = await getPrograms(T.stream);
-  return programs.map((p) => ({ slug: p.slug }));
-}
+// Render on-demand with ISR caching (avoids a build-time DB request burst).
+export const revalidate = 3600;
 
 const Page = async ({ params }: { params: Promise<{ slug: string }> }) => {
   const { slug } = await params;

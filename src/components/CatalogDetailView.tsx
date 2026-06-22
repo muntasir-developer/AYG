@@ -25,6 +25,10 @@ type Props = {
   /** Where the "Back" link goes (the track list page). */
   backHref: string;
   backLabel?: string;
+  /** Primary CTA. If ctaHref is set it renders a link (e.g. a free-learn hub);
+   *  otherwise the default "Apply Now" button is shown. */
+  ctaLabel?: string;
+  ctaHref?: string;
 };
 
 /** Small sidebar card with an icon header and arbitrary content. */
@@ -56,6 +60,8 @@ export default function CatalogDetailView({
   categoryLabel,
   backHref,
   backLabel = "Back",
+  ctaLabel = "Apply Now",
+  ctaHref,
 }: Props) {
   const syllabus = program.syllabus ?? [];
   const careers = program.career_opportunities ?? [];
@@ -348,9 +354,18 @@ export default function CatalogDetailView({
               </SideCard>
             )}
 
-            <button className="w-full py-4 rounded-xl bg-gradient-to-r from-violet-600 to-blue-600 hover:from-violet-700 hover:to-blue-700 text-white font-semibold transition-all shadow-lg shadow-violet-500/20 hover:shadow-violet-500/40">
-              Apply Now
-            </button>
+            {ctaHref ? (
+              <Link
+                href={ctaHref}
+                className="block w-full py-4 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-semibold text-center transition-all shadow-lg shadow-emerald-500/20 hover:shadow-emerald-500/40"
+              >
+                {ctaLabel}
+              </Link>
+            ) : (
+              <button className="w-full py-4 rounded-xl bg-gradient-to-r from-violet-600 to-blue-600 hover:from-violet-700 hover:to-blue-700 text-white font-semibold transition-all shadow-lg shadow-violet-500/20 hover:shadow-violet-500/40">
+                {ctaLabel}
+              </button>
+            )}
           </div>
         </div>
       </div>
