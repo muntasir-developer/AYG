@@ -36,7 +36,7 @@ export default function LearnHubView({ name, categoryKey, backHref }: Props) {
           </h1>
           <p className="text-xl text-gray-300 mt-3 max-w-2xl">
             Everything you need to learn{" "}
-            <span className="text-white font-medium">{name}</span> for free,
+            <span className="text-white font-medium">{name}</span>{" "}for free,
             organized step by step — videos, courses, notes &amp; PDFs, docs,
             practice and community.
           </p>
@@ -80,8 +80,8 @@ export default function LearnHubView({ name, categoryKey, backHref }: Props) {
         ))}
 
         <p className="text-xs text-slate-500 text-center pt-2">
-          Links open trusted free platforms and live searches, so they always
-          point to current free content. Happy learning! 🚀
+          Every link opens a trusted, free learning platform directly. Happy
+          learning! 🚀
         </p>
       </div>
     </div>

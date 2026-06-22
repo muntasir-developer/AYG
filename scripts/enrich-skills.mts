@@ -6,16 +6,17 @@
  * Run with:  npx tsx scripts/enrich-skills.mts
  * Idempotent: recomputes and overwrites these fields each run.
  *
- * Free-resource links are REAL and stable — they are either well-known free
- * platforms or search links (YouTube / SWAYAM / Google) for the exact skill, so
- * they never become dead links. Salary/recruiters/certifications are realistic
- * India-specific values by category; FAQs are generated from each skill's data.
- * Edit any specific skill afterwards with `npm run catalog edit-program ...`.
+ * Free-resource links are REAL, DIRECT links to free learning platforms (via
+ * topFreeResources in lib/learnResources) — no search-results pages. Salary/
+ * recruiters/certifications are realistic India-specific values by category;
+ * FAQs are generated from each skill's data. Edit any specific skill afterwards
+ * with `npm run catalog edit-program ...`.
  */
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
 import { createAdminClient } from "@insforge/sdk";
+import { topFreeResources } from "../src/lib/learnResources";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const proj = JSON.parse(readFileSync(path.join(root, ".insforge/project.json"), "utf8"));
@@ -265,7 +266,7 @@ async function main() {
     const key = keyById.get(p.category_id) ?? "miscellaneous";
     const profile = PROFILES[key] ?? FALLBACK;
     const patch = {
-      free_resources: buildResources(p.name, profile),
+      free_resources: topFreeResources(key),
       roadmap: buildRoadmap(p.name, key),
       tools: profile.tools,
       certifications: profile.certifications,
