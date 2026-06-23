@@ -27,6 +27,8 @@ type Props = {
   itemNoun?: string;
   /** Search box placeholder. */
   searchPlaceholder?: string;
+  /** Optional banner rendered above the results (e.g. board guidance). */
+  note?: React.ReactNode;
 };
 
 const CatalogListView: React.FC<Props> = ({
@@ -36,6 +38,7 @@ const CatalogListView: React.FC<Props> = ({
   basePath,
   itemNoun = "option",
   searchPlaceholder = "Search...",
+  note,
 }) => {
   const router = useRouter();
   const [q, setQ] = useState("");
@@ -162,6 +165,8 @@ const CatalogListView: React.FC<Props> = ({
 
       {/* Results */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        {note}
+
         {error && (
           <div className="mb-4 rounded-xl border border-rose-500/40 bg-rose-950/40 p-4 text-sm text-rose-200">
             Couldn&apos;t load {itemNoun}s: {error}
