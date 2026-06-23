@@ -6,11 +6,12 @@
  * Run with:  npx tsx scripts/enrich-skills.mts
  * Idempotent: recomputes and overwrites these fields each run.
  *
- * Free-resource links are REAL, DIRECT links to free learning platforms (via
- * topFreeResources in lib/learnResources) — no search-results pages. Salary/
- * recruiters/certifications are realistic India-specific values by category;
- * FAQs are generated from each skill's data. Edit any specific skill afterwards
- * with `npm run catalog edit-program ...`.
+ * Free-resource links come from topFreeResources in lib/learnResources: videos
+ * & courses are scoped to the exact skill on trusted platforms (YouTube/SWAYAM/
+ * Coursera); notes/practice are direct free libraries. Salary/recruiters/
+ * certifications are realistic India-specific values by category; FAQs are
+ * generated from each skill's data. Edit any skill afterwards with
+ * `npm run catalog edit-program ...`.
  */
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";

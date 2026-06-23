@@ -80,8 +80,8 @@ export default function LearnHubView({ name, categoryKey, backHref }: Props) {
         ))}
 
         <p className="text-xs text-slate-500 text-center pt-2">
-          Every link opens a trusted, free learning platform directly. Happy
-          learning! 🚀
+          Links open trusted free platforms — videos &amp; courses are scoped to
+          this exact skill. Happy learning! 🚀
         </p>
       </div>
     </div>
