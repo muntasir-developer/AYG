@@ -1,10 +1,13 @@
 /**
  * An organized library of FREE learning resources for a skill/course.
  *
- * Every link is a DIRECT, real, stable destination — an actual free course,
- * video channel, free e-book/PDF library, docs site, practice platform or
- * community. No search-results pages. Links are curated per subject "family"
- * (derived from the catalog category) so they are always real and relevant.
+ * Goal: links that are RELEVANT to the exact skill and land on real content.
+ * - "Videos" and the lead "Courses" are scoped to the skill name *inside* a
+ *   trusted platform (YouTube, SWAYAM, Coursera, freeCodeCamp, Khan) so they
+ *   open content about THIS skill — not a generic channel/home page, and not a
+ *   Google web-search page.
+ * - "Notes/PDFs", "Docs", "Practice" and "Community" are direct links to real,
+ *   free libraries/platforms chosen by subject family.
  */
 export type LearnItem = { label: string; url: string; note?: string };
 export type LearnGroup = { key: string; title: string; emoji: string; items: LearnItem[] };
@@ -43,235 +46,192 @@ const FAMILY_BY_KEY: Record<string, Family> = {
   vocational: "vocational",
 };
 
-type Lib = {
-  videos: LearnItem[];
-  courses: LearnItem[];
-  pdfs: LearnItem[];
-  docs: LearnItem[];
-  practice: LearnItem[];
-  community: LearnItem[];
-};
-
-// Resources shared by every family.
-const SWAYAM: LearnItem = { label: "SWAYAM (Govt. of India)", url: "https://swayam.gov.in/", note: "Free certified courses from top institutes" };
-const NPTEL: LearnItem = { label: "NPTEL Courses", url: "https://nptel.ac.in/courses", note: "Free IIT/IISc video courses" };
-const KHAN: LearnItem = { label: "Khan Academy", url: "https://www.khanacademy.org/", note: "Free lessons & practice" };
-const YT_CRASHCOURSE: LearnItem = { label: "CrashCourse (YouTube)", url: "https://www.youtube.com/@crashcourse", note: "Free crash courses on many subjects" };
-const NCERT: LearnItem = { label: "NCERT Textbooks (free PDF)", url: "https://ncert.nic.in/textbook.php" };
-const OPENSTAX: LearnItem = { label: "OpenStax (free PDF textbooks)", url: "https://openstax.org/subjects" };
-const MIT_OCW: LearnItem = { label: "MIT OpenCourseWare", url: "https://ocw.mit.edu/", note: "Free MIT course materials" };
-
-const LIB: Record<Family, Lib> = {
-  tech: {
-    videos: [
-      { label: "freeCodeCamp (YouTube)", url: "https://www.youtube.com/@freecodecamp", note: "Full-length free coding courses" },
-      { label: "Programming with Mosh (YouTube)", url: "https://www.youtube.com/@programmingwithmosh" },
-    ],
-    courses: [
-      { label: "freeCodeCamp — full curriculum", url: "https://www.freecodecamp.org/learn", note: "100% free + free certifications" },
-      { label: "Harvard CS50 (free)", url: "https://cs50.harvard.edu/x/", note: "World-famous intro to computer science" },
-      { label: "The Odin Project", url: "https://www.theodinproject.com/", note: "Free full-stack path" },
-      SWAYAM,
-    ],
-    pdfs: [
-      { label: "Free Programming Books (GitHub)", url: "https://github.com/EbookFoundation/free-programming-books", note: "Huge free e-book/PDF list" },
-      { label: "Eloquent JavaScript (free book)", url: "https://eloquentjavascript.net/" },
-    ],
-    docs: [
-      { label: "MDN Web Docs — Learn", url: "https://developer.mozilla.org/en-US/docs/Learn" },
-      { label: "W3Schools", url: "https://www.w3schools.com/" },
-      { label: "DevDocs (all docs in one place)", url: "https://devdocs.io/" },
-    ],
-    practice: [
-      { label: "Exercism (free, with mentoring)", url: "https://exercism.org/tracks" },
-      { label: "HackerRank", url: "https://www.hackerrank.com/" },
-      { label: "Codewars", url: "https://www.codewars.com/" },
-    ],
-    community: [
-      { label: "Stack Overflow", url: "https://stackoverflow.com/" },
-      { label: "r/learnprogramming", url: "https://www.reddit.com/r/learnprogramming/" },
-    ],
-  },
-  design: {
-    videos: [
-      { label: "The Futur (YouTube)", url: "https://www.youtube.com/@thefutur", note: "Design & creative business" },
-      { label: "Adobe (YouTube)", url: "https://www.youtube.com/@adobe" },
-    ],
-    courses: [
-      { label: "Canva Design School", url: "https://www.canva.com/designschool/", note: "Free design courses" },
-      { label: "Adobe — Learn & Support", url: "https://helpx.adobe.com/learn.html", note: "Free official tutorials" },
-      SWAYAM,
-    ],
-    pdfs: [
-      { label: "Design resources (GitHub)", url: "https://github.com/bradtraversy/design-resources-for-developers", note: "Free assets, fonts, books" },
-      OPENSTAX,
-    ],
-    docs: [
-      { label: "Figma — Help Center", url: "https://help.figma.com/hc/en-us" },
-      { label: "Material Design guidelines", url: "https://m3.material.io/" },
-    ],
-    practice: [
-      { label: "Behance (real projects)", url: "https://www.behance.net/" },
-      { label: "Dribbble (inspiration)", url: "https://dribbble.com/" },
-    ],
-    community: [
-      { label: "r/graphic_design", url: "https://www.reddit.com/r/graphic_design/" },
-      { label: "r/Design", url: "https://www.reddit.com/r/Design/" },
-    ],
-  },
-  business: {
-    videos: [
-      { label: "HubSpot (YouTube)", url: "https://www.youtube.com/@HubSpot" },
-      { label: "Google Digital Garage", url: "https://learndigital.withgoogle.com/digitalgarage", note: "Free certified courses" },
-    ],
-    courses: [
-      { label: "HubSpot Academy", url: "https://academy.hubspot.com/courses", note: "Free marketing/sales certs" },
-      { label: "Google Skillshop", url: "https://skillshop.withgoogle.com/", note: "Free Google Ads/Analytics certs" },
-      KHAN,
-    ],
-    pdfs: [
-      { label: "OpenStax — Business (free PDF)", url: "https://openstax.org/subjects/business" },
-      { label: "Startup India — resources", url: "https://www.startupindia.gov.in/" },
-    ],
-    docs: [
-      { label: "Google Analytics Help", url: "https://support.google.com/analytics" },
-      { label: "Meta Business Help Center", url: "https://www.facebook.com/business/help" },
-    ],
-    practice: [
-      { label: "Google Skillshop labs", url: "https://skillshop.withgoogle.com/" },
-      { label: "HubSpot Academy projects", url: "https://academy.hubspot.com/courses" },
-    ],
-    community: [
-      { label: "r/marketing", url: "https://www.reddit.com/r/marketing/" },
-      { label: "r/Entrepreneur", url: "https://www.reddit.com/r/Entrepreneur/" },
-    ],
-  },
-  academic: {
-    videos: [
-      { label: "Khan Academy (YouTube)", url: "https://www.youtube.com/@khanacademy" },
-      YT_CRASHCOURSE,
-    ],
-    courses: [NPTEL, SWAYAM, KHAN, MIT_OCW],
-    pdfs: [NCERT, OPENSTAX],
-    docs: [
-      { label: "MIT OpenCourseWare", url: "https://ocw.mit.edu/" },
-      { label: "Wikibooks (free books)", url: "https://en.wikibooks.org/" },
-    ],
-    practice: [
-      { label: "Khan Academy — practice", url: "https://www.khanacademy.org/" },
-      { label: "NPTEL assignments", url: "https://nptel.ac.in/courses" },
-    ],
-    community: [
-      { label: "r/learnmath", url: "https://www.reddit.com/r/learnmath/" },
-      { label: "r/AskAcademia", url: "https://www.reddit.com/r/AskAcademia/" },
-    ],
-  },
-  vocational: {
-    videos: [
-      { label: "Skill India (YouTube)", url: "https://www.youtube.com/@SkillIndiaOfficial" },
-      YT_CRASHCOURSE,
-    ],
-    courses: [
-      { label: "Skill India Digital", url: "https://www.skillindiadigital.gov.in/", note: "Free govt. skilling courses" },
-      { label: "PMKVY (Skill India)", url: "https://www.pmkvyofficial.org/", note: "Free vocational training" },
-      SWAYAM,
-    ],
-    pdfs: [
-      { label: "NIMI / DGT trade materials", url: "https://www.nimi.gov.in/", note: "Official ITI/trade study material" },
-      NPTEL,
-    ],
-    docs: [
-      { label: "Skill India Digital", url: "https://www.skillindiadigital.gov.in/" },
-      { label: "National Career Service", url: "https://www.ncs.gov.in/" },
-    ],
-    practice: [
-      { label: "Apprenticeship (apprenticeshipindia)", url: "https://www.apprenticeshipindia.gov.in/", note: "Earn while you learn" },
-      { label: "Skill India Digital", url: "https://www.skillindiadigital.gov.in/" },
-    ],
-    community: [
-      { label: "r/skilledtrades", url: "https://www.reddit.com/r/skilledtrades/" },
-      { label: "National Career Service", url: "https://www.ncs.gov.in/" },
-    ],
-  },
-  language: {
-    videos: [
-      { label: "BBC Learning English (YouTube)", url: "https://www.youtube.com/@bbclearningenglish" },
-      { label: "Khan Academy (YouTube)", url: "https://www.youtube.com/@khanacademy" },
-    ],
-    courses: [
-      { label: "Duolingo (free app)", url: "https://www.duolingo.com/" },
-      { label: "British Council — LearnEnglish", url: "https://learnenglish.britishcouncil.org/" },
-      { label: "BBC Learning English", url: "https://www.bbc.co.uk/learningenglish" },
-    ],
-    pdfs: [
-      { label: "British Council resources", url: "https://learnenglish.britishcouncil.org/" },
-      { label: "Project Gutenberg (free books)", url: "https://www.gutenberg.org/" },
-    ],
-    docs: [
-      { label: "Cambridge Dictionary", url: "https://dictionary.cambridge.org/" },
-      { label: "Grammarly Handbook", url: "https://www.grammarly.com/blog/" },
-    ],
-    practice: [
-      { label: "Duolingo", url: "https://www.duolingo.com/" },
-      { label: "BBC Learning English", url: "https://www.bbc.co.uk/learningenglish" },
-    ],
-    community: [
-      { label: "r/languagelearning", url: "https://www.reddit.com/r/languagelearning/" },
-      { label: "r/EnglishLearning", url: "https://www.reddit.com/r/EnglishLearning/" },
-    ],
-  },
-  soft: {
-    videos: [
-      { label: "TED Talks (YouTube)", url: "https://www.youtube.com/@TED" },
-      { label: "TED-Ed (YouTube)", url: "https://www.youtube.com/@TEDEd" },
-    ],
-    courses: [
-      { label: "MindTools", url: "https://www.mindtools.com/", note: "Communication & leadership skills" },
-      { label: "Toastmasters International", url: "https://www.toastmasters.org/", note: "Public speaking practice" },
-      SWAYAM,
-    ],
-    pdfs: [
-      { label: "MindTools articles & worksheets", url: "https://www.mindtools.com/" },
-      OPENSTAX,
-    ],
-    docs: [
-      { label: "Harvard Business Review", url: "https://hbr.org/" },
-      { label: "MindTools", url: "https://www.mindtools.com/" },
-    ],
-    practice: [
-      { label: "Toastmasters (find a club)", url: "https://www.toastmasters.org/find-a-club" },
-      { label: "TED Talks", url: "https://www.ted.com/talks" },
-    ],
-    community: [
-      { label: "r/socialskills", url: "https://www.reddit.com/r/socialskills/" },
-      { label: "r/publicspeaking", url: "https://www.reddit.com/r/publicspeaking/" },
-    ],
-  },
-};
-
 export function familyFor(categoryKey: string): Family {
   return FAMILY_BY_KEY[categoryKey] ?? "academic";
 }
 
-export function learnResources(_name: string, categoryKey: string): LearnGroup[] {
-  const lib = LIB[familyFor(categoryKey)];
+const enc = encodeURIComponent;
+// Skill-scoped, platform-native links (land on content about the exact skill).
+const ytSearch = (q: string) => `https://www.youtube.com/results?search_query=${enc(q)}`;
+const swayamSearch = (q: string) => `https://swayam.gov.in/explorer?searchText=${enc(q)}`;
+const courseraSearch = (q: string) => `https://www.coursera.org/search?query=${enc(q)}`;
+const fccSearch = (q: string) => `https://www.freecodecamp.org/news/search/?query=${enc(q)}`;
+const khanSearch = (q: string) => `https://www.khanacademy.org/search?page_search_query=${enc(q)}`;
+const mdnSearch = (q: string) => `https://developer.mozilla.org/en-US/search?q=${enc(q)}`;
+
+// Direct, real free libraries (subject-level, no per-skill scope needed).
+const NCERT: LearnItem = { label: "NCERT Textbooks (free PDF)", url: "https://ncert.nic.in/textbook.php" };
+const OPENSTAX: LearnItem = { label: "OpenStax — free PDF textbooks", url: "https://openstax.org/subjects" };
+const MIT_OCW: LearnItem = { label: "MIT OpenCourseWare", url: "https://ocw.mit.edu/", note: "Free MIT course materials" };
+const FREE_BOOKS: LearnItem = { label: "Free Programming Books (GitHub)", url: "https://github.com/EbookFoundation/free-programming-books", note: "Huge free e-book/PDF list" };
+
+/** Family-specific *extra* courses (beyond SWAYAM + Coursera, which all get). */
+function familyCourses(fam: Family, name: string): LearnItem[] {
+  switch (fam) {
+    case "tech":
+      return [
+        { label: `${name} — articles & courses (freeCodeCamp)`, url: fccSearch(name), note: "Free, hands-on" },
+        { label: "Harvard CS50 (free)", url: "https://cs50.harvard.edu/x/", note: "Great if this is a CS topic" },
+      ];
+    case "design":
+      return [
+        { label: "Canva Design School", url: "https://www.canva.com/designschool/", note: "Free design courses" },
+        { label: "Adobe — Learn & Support", url: "https://helpx.adobe.com/learn.html", note: "Free official tutorials" },
+      ];
+    case "business":
+      return [
+        { label: "Google Digital Garage", url: "https://learndigital.withgoogle.com/digitalgarage", note: "Free certified courses" },
+        { label: "HubSpot Academy", url: "https://academy.hubspot.com/courses", note: "Free marketing/sales certs" },
+      ];
+    case "academic":
+      return [
+        { label: `${name} on Khan Academy`, url: khanSearch(name) },
+        { label: "NPTEL Courses", url: "https://nptel.ac.in/courses", note: "Free IIT/IISc courses" },
+      ];
+    case "vocational":
+      return [
+        { label: "Skill India Digital", url: "https://www.skillindiadigital.gov.in/", note: "Free govt. skilling" },
+        { label: "PMKVY (Skill India)", url: "https://www.pmkvyofficial.org/", note: "Free vocational training" },
+      ];
+    case "language":
+      return [
+        { label: "Duolingo (free app)", url: "https://www.duolingo.com/" },
+        { label: "British Council — LearnEnglish", url: "https://learnenglish.britishcouncil.org/" },
+      ];
+    case "soft":
+      return [
+        { label: "MindTools", url: "https://www.mindtools.com/", note: "Communication & leadership" },
+        { label: "Toastmasters International", url: "https://www.toastmasters.org/", note: "Public-speaking practice" },
+      ];
+  }
+}
+
+function familyPdfs(fam: Family): LearnItem[] {
+  switch (fam) {
+    case "tech":
+      return [FREE_BOOKS, { label: "Eloquent JavaScript (free book)", url: "https://eloquentjavascript.net/" }];
+    case "design":
+      return [{ label: "Design resources (GitHub)", url: "https://github.com/bradtraversy/design-resources-for-developers" }, OPENSTAX];
+    case "business":
+      return [{ label: "OpenStax — Business (free PDF)", url: "https://openstax.org/subjects/business" }, { label: "Startup India resources", url: "https://www.startupindia.gov.in/" }];
+    case "academic":
+      return [NCERT, OPENSTAX, MIT_OCW];
+    case "vocational":
+      return [{ label: "NIMI / DGT trade material", url: "https://www.nimi.gov.in/", note: "Official ITI/trade study material" }, NCERT];
+    case "language":
+      return [{ label: "Project Gutenberg (free books)", url: "https://www.gutenberg.org/" }, { label: "British Council resources", url: "https://learnenglish.britishcouncil.org/" }];
+    case "soft":
+      return [{ label: "MindTools articles & worksheets", url: "https://www.mindtools.com/" }, OPENSTAX];
+  }
+}
+
+function familyDocs(fam: Family, name: string): LearnItem[] {
+  if (fam === "tech")
+    return [
+      { label: `${name} on MDN Web Docs`, url: mdnSearch(name) },
+      { label: "W3Schools", url: "https://www.w3schools.com/" },
+      { label: "DevDocs (all docs in one place)", url: "https://devdocs.io/" },
+    ];
   return [
-    { key: "videos", title: "Video Tutorials", emoji: "🎥", items: lib.videos },
-    { key: "courses", title: "Free Online Courses", emoji: "🎓", items: lib.courses },
-    { key: "pdfs", title: "Notes, PDFs & E-books", emoji: "📄", items: lib.pdfs },
-    { key: "docs", title: "Documentation & Reference", emoji: "📚", items: lib.docs },
-    { key: "practice", title: "Practice & Projects", emoji: "🧪", items: lib.practice },
-    { key: "community", title: "Community & Help", emoji: "💬", items: lib.community },
+    { label: "MIT OpenCourseWare", url: "https://ocw.mit.edu/" },
+    { label: "Wikibooks (free books)", url: "https://en.wikibooks.org/" },
   ];
 }
 
-/** A short flat list of direct resources for the landing-page teaser section. */
-export function topFreeResources(categoryKey: string): { label: string; url: string; type?: string }[] {
-  const lib = LIB[familyFor(categoryKey)];
+function familyPractice(fam: Family, name: string): LearnItem[] {
+  switch (fam) {
+    case "tech":
+      return [
+        { label: "Exercism (free, with mentoring)", url: "https://exercism.org/tracks" },
+        { label: "HackerRank", url: "https://www.hackerrank.com/" },
+        { label: "Codewars", url: "https://www.codewars.com/" },
+      ];
+    case "design":
+      return [
+        { label: `${name} projects on Behance`, url: `https://www.behance.net/search/projects?search=${enc(name)}` },
+        { label: "Dribbble (inspiration)", url: "https://dribbble.com/" },
+      ];
+    case "vocational":
+      return [
+        { label: "Apprenticeship India (earn while you learn)", url: "https://www.apprenticeshipindia.gov.in/" },
+        { label: "Skill India Digital", url: "https://www.skillindiadigital.gov.in/" },
+      ];
+    case "language":
+      return [
+        { label: "Duolingo", url: "https://www.duolingo.com/" },
+        { label: "BBC Learning English", url: "https://www.bbc.co.uk/learningenglish" },
+      ];
+    default:
+      return [
+        { label: "Khan Academy — practice", url: "https://www.khanacademy.org/" },
+        { label: "NPTEL assignments", url: "https://nptel.ac.in/courses" },
+      ];
+  }
+}
+
+function familyCommunity(fam: Family): LearnItem[] {
+  const map: Record<Family, LearnItem[]> = {
+    tech: [
+      { label: "Stack Overflow", url: "https://stackoverflow.com/" },
+      { label: "r/learnprogramming", url: "https://www.reddit.com/r/learnprogramming/" },
+    ],
+    design: [
+      { label: "r/graphic_design", url: "https://www.reddit.com/r/graphic_design/" },
+      { label: "Behance", url: "https://www.behance.net/" },
+    ],
+    business: [
+      { label: "r/marketing", url: "https://www.reddit.com/r/marketing/" },
+      { label: "r/Entrepreneur", url: "https://www.reddit.com/r/Entrepreneur/" },
+    ],
+    academic: [
+      { label: "r/learnmath", url: "https://www.reddit.com/r/learnmath/" },
+      { label: "r/AskAcademia", url: "https://www.reddit.com/r/AskAcademia/" },
+    ],
+    vocational: [
+      { label: "r/skilledtrades", url: "https://www.reddit.com/r/skilledtrades/" },
+      { label: "National Career Service", url: "https://www.ncs.gov.in/" },
+    ],
+    language: [
+      { label: "r/languagelearning", url: "https://www.reddit.com/r/languagelearning/" },
+      { label: "r/EnglishLearning", url: "https://www.reddit.com/r/EnglishLearning/" },
+    ],
+    soft: [
+      { label: "r/socialskills", url: "https://www.reddit.com/r/socialskills/" },
+      { label: "r/publicspeaking", url: "https://www.reddit.com/r/publicspeaking/" },
+    ],
+  };
+  return map[fam];
+}
+
+export function learnResources(name: string, categoryKey: string): LearnGroup[] {
+  const fam = familyFor(categoryKey);
+  const videos: LearnItem[] = [
+    { label: `${name} — full video courses (YouTube)`, url: ytSearch(`${name} full course`), note: "Free, full-length courses on this topic" },
+    { label: `${name} — beginner tutorials (YouTube)`, url: ytSearch(`${name} tutorial for beginners`) },
+  ];
+  const courses: LearnItem[] = [
+    { label: `${name} on SWAYAM`, url: swayamSearch(name), note: "Free certified Govt. courses on this topic" },
+    { label: `${name} on Coursera (audit free)`, url: courseraSearch(name), note: "Watch lectures free" },
+    ...familyCourses(fam, name),
+  ];
   return [
-    { ...lib.courses[0], type: "Free Course" },
-    { ...lib.videos[0], type: "Video" },
-    { ...lib.pdfs[0], type: "Notes / PDF" },
-    { ...lib.practice[0], type: "Practice" },
+    { key: "videos", title: "Video Tutorials", emoji: "🎥", items: videos },
+    { key: "courses", title: "Free Online Courses", emoji: "🎓", items: courses },
+    { key: "pdfs", title: "Notes, PDFs & E-books", emoji: "📄", items: familyPdfs(fam) },
+    { key: "docs", title: "Documentation & Reference", emoji: "📚", items: familyDocs(fam, name) },
+    { key: "practice", title: "Practice & Projects", emoji: "🧪", items: familyPractice(fam, name) },
+    { key: "community", title: "Community & Help", emoji: "💬", items: familyCommunity(fam) },
+  ];
+}
+
+/** A short flat list for the landing-page teaser section. */
+export function topFreeResources(name: string, categoryKey: string): { label: string; url: string; type?: string }[] {
+  const groups = learnResources(name, categoryKey);
+  const byKey = (k: string) => groups.find((g) => g.key === k)!.items[0];
+  return [
+    { ...byKey("courses"), type: "Free Course" },
+    { ...byKey("videos"), type: "Video" },
+    { ...byKey("pdfs"), type: "Notes / PDF" },
+    { ...byKey("practice"), type: "Practice" },
   ].map(({ label, url, type }) => ({ label, url, type }));
 }

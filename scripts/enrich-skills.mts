@@ -266,7 +266,7 @@ async function main() {
     const key = keyById.get(p.category_id) ?? "miscellaneous";
     const profile = PROFILES[key] ?? FALLBACK;
     const patch = {
-      free_resources: topFreeResources(key),
+      free_resources: topFreeResources(p.name, key),
       roadmap: buildRoadmap(p.name, key),
       tools: profile.tools,
       certifications: profile.certifications,
@@ -274,8 +274,18 @@ async function main() {
       salary_range: profile.salary,
       faqs: buildFaqs(p.name, p.duration ?? "", p.fees ?? "", p.career_opportunities ?? []),
     };
-    const { error } = await admin.database.from("programs").update(patch).eq("id", p.id);
-    if (error) throw new Error(`update ${p.name}: ${JSON.stringify(error)}`);
+    // Retry a few times — the backend occasionally times out under burst.
+    let lastErr: unknown = null;
+    for (let attempt = 1; attempt <= 4; attempt++) {
+      const { error } = await admin.database.from("programs").update(patch).eq("id", p.id);
+      if (!error) {
+        lastErr = null;
+        break;
+      }
+      lastErr = error;
+      await new Promise((r) => setTimeout(r, attempt * 1000));
+    }
+    if (lastErr) throw new Error(`update ${p.name}: ${JSON.stringify(lastErr)}`);
     n++;
   }
   console.log(`✓ Enriched ${n} skills with resources, roadmap, tools, certs, recruiters, salary & FAQs.`);
