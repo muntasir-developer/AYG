@@ -137,7 +137,7 @@ const Page = () => {
 
           {/* Passed 10th Button */}
           <button
-            onClick={() => router.push("/quest10")}
+            onClick={() => router.push("/quest10/board")}
             className="group relative w-full py-3.5 sm:py-4 px-5 sm:px-6 bg-gradient-to-r from-emerald-600 to-teal-600
                        text-white font-semibold text-sm sm:text-base rounded-xl sm:rounded-xl shadow-xl shadow-emerald-500/30
                        hover:shadow-2xl hover:shadow-emerald-500/50 hover:scale-[1.02] active:scale-[0.98]

@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { BookOpen, Wrench, Cog, HeartPulse, Award, ArrowLeft, Info } from "lucide-react";
-import { BOARDS, boardByKey, ANY_BOARD_NOTE } from "@/lib/boards";
+import { boardByKey, ANY_BOARD_NOTE } from "@/lib/boards";
 
 const BOARD_STORAGE_KEY = "ayg_board";
 
@@ -41,17 +41,10 @@ const Page: React.FC = () => {
   const router = useRouter();
   const [board, setBoard] = useState<string | null>(null);
 
-  // Remember the student's board across visits.
+  // The board is chosen on the dedicated /quest10/board step and remembered here.
   useEffect(() => {
     setBoard(localStorage.getItem(BOARD_STORAGE_KEY));
   }, []);
-
-  const selectBoard = (key: string) => {
-    const next = board === key ? null : key;
-    setBoard(next);
-    if (next) localStorage.setItem(BOARD_STORAGE_KEY, next);
-    else localStorage.removeItem(BOARD_STORAGE_KEY);
-  };
 
   const selected = boardByKey(board);
 
@@ -105,46 +98,37 @@ const Page: React.FC = () => {
           </p>
         </div>
 
-        {/* Board selector */}
-        <div className="mb-6">
-          <p className="text-center text-xs sm:text-sm text-blue-200/60 mb-3">
-            Which board did you complete Class 10 from?{" "}
-            <span className="text-blue-200/40">(optional — tailors your stream guidance)</span>
-          </p>
-          <div className="flex flex-wrap justify-center gap-2">
-            {BOARDS.map((b) => (
-              <button
-                key={b.key}
-                onClick={() => selectBoard(b.key)}
-                title={b.full}
-                className={`px-3 py-1.5 rounded-full border text-xs sm:text-sm transition-all ${
-                  board === b.key
-                    ? "bg-gradient-to-r from-emerald-500 to-teal-500 text-white border-transparent shadow-lg shadow-emerald-500/30"
-                    : "bg-white/5 text-blue-100 border-white/15 hover:bg-white/10 hover:border-white/30"
-                }`}
-              >
-                {b.label}
-              </button>
-            ))}
-          </div>
-
-          {selected && (
-            <div className="mt-4 rounded-xl border border-emerald-400/20 bg-emerald-950/30 p-4 text-left">
-              <div className="flex items-center gap-2 mb-1.5">
+        {/* Board guidance (board is chosen on the /quest10/board step) */}
+        {selected ? (
+          <div className="mb-6 rounded-xl border border-emerald-400/20 bg-emerald-950/30 p-4 text-left">
+            <div className="flex items-center justify-between gap-2 mb-1.5">
+              <div className="flex items-center gap-2 min-w-0">
                 <Info className="w-4 h-4 text-emerald-300 shrink-0" />
-                <span className="text-sm font-semibold text-white">{selected.full}</span>
+                <span className="text-sm font-semibold text-white truncate">{selected.full}</span>
               </div>
-              <p className="text-xs sm:text-sm text-blue-100/80 leading-relaxed">{selected.blurb}</p>
-              <p className="text-xs sm:text-sm text-blue-100/80 leading-relaxed mt-2">
-                <span className="font-medium text-emerald-300">Streams (11–12): </span>
-                {selected.streamTip}
-              </p>
-              <p className="text-[11px] sm:text-xs text-blue-200/50 leading-relaxed mt-2">
-                {ANY_BOARD_NOTE}
-              </p>
+              <button
+                onClick={() => router.push("/quest10/board")}
+                className="text-[11px] sm:text-xs text-emerald-300 hover:text-emerald-200 underline underline-offset-2 shrink-0"
+              >
+                Change
+              </button>
             </div>
-          )}
-        </div>
+            <p className="text-xs sm:text-sm text-blue-100/80 leading-relaxed mt-2">
+              <span className="font-medium text-emerald-300">Streams (11–12): </span>
+              {selected.streamTip}
+            </p>
+            <p className="text-[11px] sm:text-xs text-blue-200/50 leading-relaxed mt-2">
+              {ANY_BOARD_NOTE}
+            </p>
+          </div>
+        ) : (
+          <button
+            onClick={() => router.push("/quest10/board")}
+            className="mb-6 w-full rounded-xl border border-white/15 bg-white/5 p-3 text-xs sm:text-sm text-blue-100/80 hover:bg-white/10 hover:border-white/30 transition-all"
+          >
+            🎓 Tell us your <span className="font-medium text-emerald-300">board</span> for tailored stream guidance →
+          </button>
+        )}
 
         {/* Tracks */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
