@@ -31,7 +31,8 @@ const Page = () => {
       if (key) localStorage.setItem(BOARD_STORAGE_KEY, key);
       else localStorage.removeItem(BOARD_STORAGE_KEY);
     }
-    router.push(key ? `/quest10?board=${key}` : "/quest10");
+    // Board only affects the streams path — go straight to the tailored streams.
+    router.push(key ? `/quest10/streams?board=${key}` : "/quest10/streams");
   };
 
   return (

@@ -1,10 +1,7 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useRouter } from "next/navigation";
-import { BookOpen, Wrench, Cog, HeartPulse, Award, ArrowLeft, Info } from "lucide-react";
-import { boardByKey, ANY_BOARD_NOTE } from "@/lib/boards";
-
-const BOARD_STORAGE_KEY = "ayg_board";
+import { BookOpen, Wrench, Cog, HeartPulse, Award, ArrowLeft } from "lucide-react";
 
 const TRACKS = [
   {
@@ -12,7 +9,8 @@ const TRACKS = [
     desc: "Science, Commerce or Arts — the academic route",
     icon: <BookOpen className="w-8 h-8" strokeWidth={1.5} />,
     colors: "from-blue-600/90 to-indigo-600/90",
-    link: "/quest10/streams",
+    // Streams depends on the board, so it goes through the board step first.
+    link: "/quest10/board",
   },
   {
     title: "Diploma / Polytechnic",
@@ -39,18 +37,6 @@ const TRACKS = [
 
 const Page: React.FC = () => {
   const router = useRouter();
-  const [board, setBoard] = useState<string | null>(null);
-
-  // The board is chosen on the dedicated /quest10/board step and remembered here.
-  useEffect(() => {
-    setBoard(localStorage.getItem(BOARD_STORAGE_KEY));
-  }, []);
-
-  const selected = boardByKey(board);
-
-  // The Streams track is the one that depends on the board.
-  const trackLink = (link: string) =>
-    link === "/quest10/streams" && board ? `${link}?board=${board}` : link;
 
   return (
     <section className="min-h-screen flex flex-col items-center justify-center px-4 sm:px-6 lg:px-12 bg-gradient-to-br from-slate-900 via-blue-950 to-indigo-950 font-sans relative overflow-hidden">
@@ -98,44 +84,12 @@ const Page: React.FC = () => {
           </p>
         </div>
 
-        {/* Board guidance (board is chosen on the /quest10/board step) */}
-        {selected ? (
-          <div className="mb-6 rounded-xl border border-emerald-400/20 bg-emerald-950/30 p-4 text-left">
-            <div className="flex items-center justify-between gap-2 mb-1.5">
-              <div className="flex items-center gap-2 min-w-0">
-                <Info className="w-4 h-4 text-emerald-300 shrink-0" />
-                <span className="text-sm font-semibold text-white truncate">{selected.full}</span>
-              </div>
-              <button
-                onClick={() => router.push("/quest10/board")}
-                className="text-[11px] sm:text-xs text-emerald-300 hover:text-emerald-200 underline underline-offset-2 shrink-0"
-              >
-                Change
-              </button>
-            </div>
-            <p className="text-xs sm:text-sm text-blue-100/80 leading-relaxed mt-2">
-              <span className="font-medium text-emerald-300">Streams (11–12): </span>
-              {selected.streamTip}
-            </p>
-            <p className="text-[11px] sm:text-xs text-blue-200/50 leading-relaxed mt-2">
-              {ANY_BOARD_NOTE}
-            </p>
-          </div>
-        ) : (
-          <button
-            onClick={() => router.push("/quest10/board")}
-            className="mb-6 w-full rounded-xl border border-white/15 bg-white/5 p-3 text-xs sm:text-sm text-blue-100/80 hover:bg-white/10 hover:border-white/30 transition-all"
-          >
-            🎓 Tell us your <span className="font-medium text-emerald-300">board</span> for tailored stream guidance →
-          </button>
-        )}
-
         {/* Tracks */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
           {TRACKS.map((item) => (
             <button
               key={item.title}
-              onClick={() => router.push(trackLink(item.link))}
+              onClick={() => router.push(item.link)}
               className={`group relative flex flex-col items-start justify-between rounded-xl p-5 min-h-[140px] text-left
                           text-white shadow-xl border transition-all duration-500
                           bg-gradient-to-br ${item.colors} border-white/10
