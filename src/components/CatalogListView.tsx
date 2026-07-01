@@ -48,8 +48,12 @@ const CatalogListView: React.FC<Props> = ({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const [reloadKey, setReloadKey] = useState(0);
+
   useEffect(() => {
     let cancelled = false;
+    setLoading(true);
+    setError(null);
     (async () => {
       try {
         const [cats, progs] = await Promise.all([
@@ -69,7 +73,7 @@ const CatalogListView: React.FC<Props> = ({
     return () => {
       cancelled = true;
     };
-  }, [stream]);
+  }, [stream, reloadKey]);
 
   const flat = useMemo(() => {
     const labelByCat = new Map(categories.map((c) => [c.id, c.label]));
@@ -168,8 +172,14 @@ const CatalogListView: React.FC<Props> = ({
         {note}
 
         {error && (
-          <div className="mb-4 rounded-xl border border-rose-500/40 bg-rose-950/40 p-4 text-sm text-rose-200">
-            Couldn&apos;t load {itemNoun}s: {error}
+          <div className="mb-4 rounded-xl border border-rose-500/40 bg-rose-950/40 p-4 text-sm text-rose-200 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <span>Couldn&apos;t load {itemNoun}s — the server may be busy. {error}</span>
+            <button
+              onClick={() => setReloadKey((k) => k + 1)}
+              className="shrink-0 self-start rounded-lg border border-rose-400/40 bg-rose-500/20 px-4 py-1.5 font-medium text-rose-100 hover:bg-rose-500/30 transition"
+            >
+              Try again
+            </button>
           </div>
         )}
 

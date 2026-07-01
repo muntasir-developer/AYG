@@ -61,14 +61,33 @@ const PROGRAM_DETAIL_COLS = `${PROGRAM_LIST_COLS},free_resources,roadmap,tools,c
  * want.
  */
 async function rest<T>(query: string): Promise<T> {
-  const res = await fetch(`${INSFORGE_URL}/api/database/records/${query}`, {
+  const url = `${INSFORGE_URL}/api/database/records/${query}`;
+  const init: RequestInit = {
     headers: { Authorization: `Bearer ${INSFORGE_ANON_KEY}` },
     next: { revalidate: 3600 },
-  });
-  if (!res.ok) {
-    throw new Error(`InsForge ${res.status}: ${await res.text().catch(() => "")}`);
+  } as RequestInit;
+
+  // Retry a few times so a brief backend hiccup ("Failed to fetch" / 5xx /
+  // gateway timeout) doesn't surface as a hard error to the user.
+  const MAX_ATTEMPTS = 3;
+  let lastErr: unknown;
+  for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
+    try {
+      const res = await fetch(url, init);
+      if (res.ok) return (await res.json()) as T;
+      // Retry on transient server/gateway errors; fail fast on 4xx.
+      if (res.status < 500 || attempt === MAX_ATTEMPTS) {
+        throw new Error(`InsForge ${res.status}: ${await res.text().catch(() => "")}`);
+      }
+      lastErr = new Error(`InsForge ${res.status}`);
+    } catch (e) {
+      lastErr = e;
+      if (attempt === MAX_ATTEMPTS) break;
+    }
+    // Backoff: 400ms, 800ms.
+    await new Promise((r) => setTimeout(r, 400 * attempt));
   }
-  return res.json() as Promise<T>;
+  throw lastErr instanceof Error ? lastErr : new Error("Failed to load catalog");
 }
 
 /** All categories for a stream, ordered for display. */
