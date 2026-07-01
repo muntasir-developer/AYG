@@ -5,13 +5,15 @@ import { learnResources } from "@/lib/learnResources";
 type Props = {
   name: string;
   categoryKey: string;
+  /** Program slug — used to look up a curated video course. */
+  slug?: string;
   /** Link back to the program's detail page. */
   backHref: string;
 };
 
 /** Organized "Learn for Free" hub: videos, courses, PDFs, docs, practice, community. */
-export default function LearnHubView({ name, categoryKey, backHref }: Props) {
-  const groups = learnResources(name, categoryKey).filter((g) => g.items.length > 0);
+export default function LearnHubView({ name, categoryKey, slug, backHref }: Props) {
+  const groups = learnResources(name, categoryKey, slug).filter((g) => g.items.length > 0);
   const total = groups.reduce((n, g) => n + g.items.length, 0);
 
   return (

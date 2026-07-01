@@ -14,6 +14,7 @@ const Page = async ({ params }: { params: Promise<{ slug: string }> }) => {
   return (
     <LearnHubView
       name={program.name}
+      slug={program.slug}
       categoryKey={category?.key ?? ""}
       backHref={`/skills/${slug}`}
     />

@@ -9,6 +9,8 @@
  * - "Notes/PDFs", "Docs", "Practice" and "Community" are direct links to real,
  *   free libraries/platforms chosen by subject family.
  */
+import { curatedVideoUrl } from "./videoCourses";
+
 export type LearnItem = { label: string; url: string; note?: string };
 export type LearnGroup = { key: string; title: string; emoji: string; items: LearnItem[] };
 
@@ -203,12 +205,22 @@ function familyCommunity(fam: Family): LearnItem[] {
   return map[fam];
 }
 
-export function learnResources(name: string, categoryKey: string): LearnGroup[] {
+export function learnResources(
+  name: string,
+  categoryKey: string,
+  slug?: string
+): LearnGroup[] {
   const fam = familyFor(categoryKey);
-  const videos: LearnItem[] = [
-    { label: `${name} — full video courses (YouTube)`, url: ytSearch(`${name} full course`), note: "Free, full-length courses on this topic" },
-    { label: `${name} — beginner tutorials (YouTube)`, url: ytSearch(`${name} tutorial for beginners`) },
-  ];
+  const curated = curatedVideoUrl(slug);
+  const videos: LearnItem[] = curated
+    ? [
+        { label: `${name} — full course (YouTube playlist)`, url: curated, note: "Recommended free course" },
+        { label: `More ${name} videos (YouTube)`, url: ytSearch(`${name} tutorial`) },
+      ]
+    : [
+        { label: `${name} — full video courses (YouTube)`, url: ytSearch(`${name} full course`), note: "Free, full-length courses on this topic" },
+        { label: `${name} — beginner tutorials (YouTube)`, url: ytSearch(`${name} tutorial for beginners`) },
+      ];
   const courses: LearnItem[] = [
     { label: `${name} on SWAYAM`, url: swayamSearch(name), note: "Free certified Govt. courses on this topic" },
     { label: `${name} on Coursera (audit free)`, url: courseraSearch(name), note: "Watch lectures free" },
